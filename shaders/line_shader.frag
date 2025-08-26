@@ -1,4 +1,4 @@
-#version 450 core
+#version 400 core
 
 /*-------------------------------------------------------
 Copyright (C) 2022 DigiPen Institute of Technology.

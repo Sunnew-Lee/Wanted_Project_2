@@ -7,7 +7,7 @@ Purpose:
 	This file is the application of the graphics engine.
 Language: C++ 17
 Platform: VS 19 / version 16.9.0 / Windows
-Project: sunwoo.lee_CS300_2
+Project: sunwoo.lee_CS300_1
 Author: Sunwoo Lee / sunwoo.lee / 0055087
 Creation date: 09.17.2022
 --------------------------------------------------------*/
@@ -21,7 +21,6 @@ Creation date: 09.17.2022
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_glfw.h>
 #include <scene.h>
-#include <Camera.h>
 
 void draw();
 void update();
@@ -34,7 +33,6 @@ GLFWwindow* ptr_window;
 Scene scene;
 double fps;
 std::pair<int, int> window_size{ 1600,800 };
-Camera *camera;
 
 int main() {
 	init();
@@ -49,13 +47,11 @@ void init() {
 	int w = window_size.first;
 	int h = window_size.second;
 
-	if (!helper_init(w, h, "CS350_Assignment2")) {
+	if (!helper_init(w, h, "CS300_Assignment1")) {
 		std::cout << "Unable to create OpenGL context" << std::endl;
 		std::exit(EXIT_FAILURE);
 	}
-
-	camera = new Camera(Vec3(1338.f, 45000.f, 136532.f));
-	scene.init(w, h, camera);
+	scene.init(w, h);
 
 	// Setup ImGui context
 	IMGUI_CHECKVERSION();
@@ -63,7 +59,7 @@ void init() {
 
 	// Setup Platform/Renderer bindings
 	ImGui_ImplGlfw_InitForOpenGL(ptr_window, true);
-	const char* glsl_version = "#version 450";
+	const char* glsl_version = "#version 400";
 	ImGui_ImplOpenGL3_Init(glsl_version);
 	ImGui::StyleColorsDark();
 }
@@ -82,7 +78,7 @@ bool helper_init(GLint w, GLint h, std::string t)
 
 	// specify OpenGL version 3.3
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
 	// specify modern OpenGL only - no compatibility with "old" OpenGL
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	// applications will be double-buffered ...
@@ -124,10 +120,10 @@ bool helper_init(GLint w, GLint h, std::string t)
 	}
 	if (GLEW_VERSION_3_3) {
 		std::cout << "Using glew version: " << glewGetString(GLEW_VERSION) << std::endl;
-		std::cout << "Driver supports OpenGL 4.5\n" << std::endl;
+		std::cout << "Driver supports OpenGL 4.0\n" << std::endl;
 	}
 	else {
-		std::cerr << "Driver doesn't support OpenGL 4.5 - abort program" << std::endl;
+		std::cerr << "Driver doesn't support OpenGL 4.0 - abort program" << std::endl;
 		return false;
 	}
 
@@ -156,7 +152,6 @@ void update() {
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	camera->processInput(ptr_window, delta_time);
 	scene.update(delta_time);
 	// Display FPS in another viewport
 	//ImGui::Begin("Scene");
@@ -164,29 +159,29 @@ void update() {
 	//ImGui::End();
 }
 
-double update_time(double fps_calc_interval) {
+double update_time(double /*fps_calc_interval*/) {
 	// get elapsed time (in seconds) between previous and current frames
 	static double prev_time = glfwGetTime();
 	double curr_time = glfwGetTime();
 	double delta_time = curr_time - prev_time;
-	prev_time = curr_time;
+	//prev_time = curr_time;
 
-	// fps calculations
-	static double count = 0.0; // number of game loop iterations
-	static double start_time = glfwGetTime();
-	// get elapsed time since very beginning (in seconds) ...
-	double elapsed_time = curr_time - start_time;
+	////// fps calculations
+	//static double count = 0.0; // number of game loop iterations
+	//static double start_time = glfwGetTime();
+	//// get elapsed time since very beginning (in seconds) ...
+	//double elapsed_time = curr_time - start_time;
 
-	++count;
+	//++count;
 
-	// update fps at least every 10 seconds ...
-	fps_calc_interval = (fps_calc_interval < 0.0) ? 0.0 : fps_calc_interval;
-	fps_calc_interval = (fps_calc_interval > 10.0) ? 10.0 : fps_calc_interval;
-	if (elapsed_time > fps_calc_interval) {
-		fps = count / elapsed_time;
-		start_time = curr_time;
-		count = 0.0;
-	}
+	////// update fps at least every 10 seconds ...
+	//fps_calc_interval = (fps_calc_interval < 0.0) ? 0.0 : fps_calc_interval;
+	//fps_calc_interval = (fps_calc_interval > 10.0) ? 10.0 : fps_calc_interval;
+	//if (elapsed_time > fps_calc_interval) {
+	//	fps = count / elapsed_time;
+	//	start_time = curr_time;
+	//	count = 0.0;
+	//}
 
 	// done calculating fps ...
 	return delta_time;
@@ -195,8 +190,8 @@ double update_time(double fps_calc_interval) {
 
 void draw() {
 	// clear colorbuffer with RGBA value in glClearColor ...
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//glClearColor(0.5f, 0.5f, 0.5f, 1.f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(0.5f, 0.5f, 0.5f, 1.f);
 
 	scene.draw();
 
@@ -211,7 +206,6 @@ void draw() {
 
 void cleanup() {
 	scene.cleanup();
-	delete camera;
 
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();

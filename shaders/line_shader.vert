@@ -1,4 +1,4 @@
-#version 450 core
+#version 400 core
 
 /*-------------------------------------------------------
 Copyright (C) 2022 DigiPen Institute of Technology.
@@ -16,12 +16,9 @@ Creation date: 09.17.2022
 
 layout (location=0) in vec3 pos;
 
-
-uniform mat4 projection;
 uniform mat4 view;
-
-
+uniform mat4 projection;
 
 void main() {
-  gl_Position = projection * view * vec4(pos, 1.0);
+  gl_Position = projection * view  * vec4(pos, 1.0);
 }

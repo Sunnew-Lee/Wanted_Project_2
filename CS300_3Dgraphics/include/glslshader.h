@@ -12,7 +12,7 @@ Purpose:
     program object.
 Language: C++ 17
 Platform: VS 19 / version 16.9.0 / Windows
-Project: sunwoo.lee_CS300_2
+Project: sunwoo.lee_CS300_1
 Author: pghali@digipen.edu
 Modified by: Sunwoo Lee / sunwoo.lee / 0055087
 Modified date: 09.17.2022
@@ -46,7 +46,6 @@ public:
     // default ctor required to initialize GLSLShader object to safe state
     GLSLShader() : pgm_handle(0), is_linked(GL_FALSE) {
     }
-    GLSLShader(std::vector<std::pair<GLenum, std::string>>);
 
     // This function not only compiles individual shader sources but links
     // multiple shader objects to create an exectuable shader program.
